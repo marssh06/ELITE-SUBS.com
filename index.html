@@ -1,571 +1,296 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VaultStore Marketplace</title>
-  <meta name="description" content="Fun storefront demo for subscriptions, digital plans, and premium bundles." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root, [data-theme="light"] {
-      --text-xs: clamp(.75rem,.7rem + .25vw,.875rem);
-      --text-sm: clamp(.875rem,.8rem + .35vw,1rem);
-      --text-base: clamp(1rem,.95rem + .25vw,1.125rem);
-      --text-lg: clamp(1.125rem,1rem + .75vw,1.5rem);
-      --text-xl: clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
-      --text-2xl: clamp(2rem,1.2rem + 2.5vw,3.5rem);
-      --text-3xl: clamp(2.7rem,1.1rem + 4vw,4.75rem);
-      --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-5: 1.25rem;
-      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
-      --bg: #fff8ef; --surface: #ffffff; --surface-2: #fff1df; --surface-3: #ffe6c7;
-      --text: #2f1f13; --muted: #755847; --faint: #b59684; --inverse: #fffdf8;
-      --primary: #ff6b6b; --primary-2: #ff9770; --teal: #4ecdc4; --yellow: #ffd166; --blue: #6c7cff; --green: #39b86d;
-      --border: rgba(58,34,19,.11); --divider: rgba(58,34,19,.08);
-      --radius-sm: .5rem; --radius-md: .9rem; --radius-lg: 1.25rem; --radius-xl: 1.75rem; --radius-full: 999px;
-      --shadow-sm: 0 8px 20px rgba(112,60,24,.06); --shadow-md: 0 18px 40px rgba(112,60,24,.10); --shadow-lg: 0 28px 60px rgba(112,60,24,.15);
-      --font-display: 'Baloo 2', cursive; --font-body: 'Inter', sans-serif; --wrap: 1180px;
-    }
-    [data-theme="dark"] {
-      --bg: #181311; --surface: #241d1a; --surface-2: #2d231f; --surface-3: #3a2b24;
-      --text: #fff0e1; --muted: #d5baa4; --faint: #a98a73; --inverse: #1f1610;
-      --primary: #ff8686; --primary-2: #ffa17d; --teal: #6ee1d8; --yellow: #ffdb77; --blue: #98a9ff; --green: #57d87f;
-      --border: rgba(255,238,223,.11); --divider: rgba(255,238,223,.08);
-      --shadow-sm: 0 8px 20px rgba(0,0,0,.22); --shadow-md: 0 18px 40px rgba(0,0,0,.28); --shadow-lg: 0 28px 60px rgba(0,0,0,.34);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      min-height: 100vh; font-family: var(--font-body); font-size: var(--text-base); line-height: 1.6; color: var(--text);
-      background:
-        radial-gradient(circle at 8% 0%, rgba(255,209,102,.30), transparent 22%),
-        radial-gradient(circle at 95% 10%, rgba(78,205,196,.22), transparent 20%),
-        radial-gradient(circle at 100% 100%, rgba(108,124,255,.12), transparent 20%),
-        var(--bg);
-    }
-    img, svg { display: block; max-width: 100%; }
-    button, input, select { font: inherit; color: inherit; }
-    button { border: 0; background: none; cursor: pointer; }
-    a { color: inherit; text-decoration: none; }
-    :focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: .6rem; }
-    .skip-link { position: absolute; left: -9999px; top: 1rem; background: var(--text); color: var(--inverse); padding: .8rem 1rem; border-radius: 999px; z-index: 200; }
-    .skip-link:focus { left: 1rem; }
-    .container { width: min(calc(100% - 2rem), var(--wrap)); margin-inline: auto; }
-    .section { padding-block: clamp(var(--space-12), 8vw, var(--space-20)); }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: .55rem; padding: .6rem 1rem; border-radius: 999px; background: var(--surface-2);
-      border: 1px solid var(--border); box-shadow: var(--shadow-sm); font-size: var(--text-sm); font-weight: 800;
-    }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 48px; padding: .95rem 1.25rem;
-      border-radius: 999px; font-size: var(--text-sm); font-weight: 800; transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; box-shadow: var(--shadow-md); }
-    .btn-secondary { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-    .btn-ghost { background: transparent; border: 1px dashed var(--border); }
-    .site-header {
-      position: sticky; top: 0; z-index: 90; backdrop-filter: blur(14px); background: color-mix(in srgb, var(--bg) 84%, transparent);
-      border-bottom: 1px solid var(--divider);
-    }
-    .header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; flex-wrap: wrap; }
-    .brand { display: flex; align-items: center; gap: .8rem; font-weight: 800; }
-    .brand-mark {
-      width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; color: #fff;
-      background: linear-gradient(135deg, var(--primary), var(--yellow)); box-shadow: var(--shadow-sm);
-    }
-    .brand-name { font-family: var(--font-display); font-size: 1.65rem; line-height: 1; }
-    .header-nav { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .header-nav a { font-size: var(--text-sm); font-weight: 700; color: var(--muted); }
-    .header-actions { display: flex; gap: .75rem; align-items: center; }
-    .icon-btn {
-      width: 46px; height: 46px; border-radius: 999px; display: grid; place-items: center; background: var(--surface);
-      border: 1px solid var(--border); box-shadow: var(--shadow-sm);
-    }
-    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; align-items: center; }
-    .hero-copy h1 { margin-top: 1.1rem; font-family: var(--font-display); font-size: var(--text-3xl); line-height: .95; max-width: 10ch; }
-    .hero-copy p { margin-top: 1rem; max-width: 58ch; color: var(--muted); font-size: var(--text-lg); }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.4rem; }
-    .hero-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .85rem; margin-top: 1.6rem; }
-    .stat-card, .step-card, .trust-card, .faq-card, .checkout-card, .cart-card, .panel, .plan-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 1.5rem; box-shadow: var(--shadow-sm);
-    }
-    .stat-card { padding: 1rem; }
-    .stat-card strong { display: block; font-family: var(--font-display); font-size: var(--text-xl); line-height: 1; }
-    .hero-panel {
-      position: relative; padding: 1.5rem; overflow: hidden; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, white), var(--surface-2));
-      border: 1px solid var(--border); border-radius: 2rem; box-shadow: var(--shadow-lg);
-    }
-    .hero-panel::after {
-      content: ''; position: absolute; right: -3rem; bottom: -5rem; width: 12rem; height: 12rem;
-      background: radial-gradient(circle, rgba(255,107,107,.26), transparent 60%); pointer-events: none;
-    }
-    .dashboard-stack { display: grid; gap: 1rem; }
-    .dashboard-top { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
-    .dashboard-price { font-family: var(--font-display); font-size: var(--text-xl); }
-    .mini-progress { height: 12px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
-    .mini-progress span { display: block; width: 81%; height: 100%; background: linear-gradient(90deg, var(--teal), var(--primary)); }
-    .bubble-row { display: flex; flex-wrap: wrap; gap: .65rem; }
-    .bubble { padding: .72rem .9rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--border); font-size: var(--text-sm); font-weight: 700; }
-    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-    .section-head h2 { margin-top: .7rem; font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1; }
-    .section-head p { max-width: 60ch; color: var(--muted); }
-    .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; margin-bottom: 1.25rem; }
-    .search, .select {
-      min-height: 52px; width: 100%; padding: 0 1rem; border-radius: 999px; background: var(--surface);
-      border: 1px solid var(--border); box-shadow: var(--shadow-sm);
-    }
-    .billing-toggle { display: inline-flex; gap: .35rem; padding: .3rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-    .billing-toggle button { min-height: 44px; padding: .75rem 1rem; border-radius: 999px; font-size: var(--text-sm); font-weight: 800; color: var(--muted); }
-    .billing-toggle button.active { background: var(--primary); color: #fff; }
-    .plans-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
-    .plan-card { position: relative; padding: 1.25rem; display: grid; gap: 1rem; transition: transform .18s ease, box-shadow .18s ease; }
-    .plan-card:hover { transform: translateY(-6px) rotate(-.4deg); box-shadow: var(--shadow-md); }
-    .plan-card.popular { background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 7%, var(--surface)), var(--surface)); border-color: color-mix(in srgb, var(--primary) 38%, var(--border)); }
-    .tag { position: absolute; top: 1rem; right: 1rem; background: var(--yellow); color: #49310f; border-radius: 999px; padding: .45rem .75rem; font-size: var(--text-xs); font-weight: 800; }
-    .plan-top { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
-    .plan-icon { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; background: var(--surface-2); font-size: 1.5rem; }
-    .plan-price { display: flex; align-items: baseline; gap: .45rem; flex-wrap: wrap; }
-    .plan-price strong { font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1; }
-    .muted { color: var(--muted); }
-    .features { display: grid; gap: .65rem; list-style: none; }
-    .features li { display: flex; gap: .55rem; color: var(--muted); font-size: var(--text-sm); }
-    .features li::before { content: '✔'; color: var(--green); font-weight: 800; }
-    .chips { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .chip { padding: .55rem .8rem; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); font-size: var(--text-xs); font-weight: 800; }
-    .triple-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
-    .step-card, .trust-card, .faq-card { padding: 1.25rem; }
-    .step-card h3, .trust-card h3, .faq-card h3, .checkout-card h3, .cart-card h3 { font-size: var(--text-lg); margin-top: .85rem; margin-bottom: .4rem; }
-    .icon-box { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px; background: var(--surface-2); font-weight: 800; }
-    .commerce-grid { display: grid; grid-template-columns: 1.12fr .88fr; gap: 1rem; align-items: start; }
-    .checkout-card, .cart-card { padding: 1.25rem; }
-    .notice {
-      margin-top: .8rem; padding: .9rem 1rem; border-radius: 1rem; background: color-mix(in srgb, var(--teal) 14%, var(--surface));
-      border: 1px solid color-mix(in srgb, var(--teal) 30%, var(--border)); font-size: var(--text-sm); font-weight: 600;
-    }
-    .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-    .field { display: grid; gap: .45rem; }
-    .field.full { grid-column: 1 / -1; }
-    .field label { font-size: var(--text-sm); font-weight: 700; }
-    .field input, .field select {
-      min-height: 52px; padding: 0 1rem; border-radius: 1rem; border: 1px solid var(--border); background: var(--surface-2);
-    }
-    .pay-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
-    .pay-pill { padding: .72rem .9rem; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); font-size: var(--text-sm); font-weight: 800; }
-    .cart-card { position: sticky; top: 5.5rem; display: grid; gap: 1rem; }
-    .cart-empty {
-      padding: 1rem; border-radius: 1rem; border: 1px dashed var(--border); background: var(--surface-2); color: var(--muted); font-size: var(--text-sm);
-    }
-    .cart-list { display: grid; gap: .75rem; }
-    .cart-item {
-      display: grid; grid-template-columns: 1fr auto; gap: .75rem; padding: .85rem; border-radius: 1rem; background: var(--surface-2); border: 1px solid var(--border);
-    }
-    .cart-meta strong { display: block; }
-    .cart-meta small { color: var(--muted); }
-    .remove-btn {
-      width: 40px; height: 40px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-    }
-    .summary-line { display: flex; justify-content: space-between; gap: .75rem; color: var(--muted); font-size: var(--text-sm); }
-    .summary-line.total { padding-top: .6rem; border-top: 1px solid var(--divider); color: var(--text); font-weight: 800; font-size: var(--text-base); }
-    .faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; }
-    .footer { padding: 2.5rem 0 3rem; border-top: 1px solid var(--divider); }
-    .footer-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--muted); font-size: var(--text-sm); }
-    .toast {
-      position: fixed; right: 1rem; bottom: 1rem; z-index: 100; max-width: 320px; padding: 1rem 1.1rem; border-radius: 1rem;
-      background: var(--green); color: #fff; box-shadow: var(--shadow-lg); display: none;
-    }
-    .toast.show { display: block; }
-    @media (max-width: 1024px) {
-      .hero-grid, .plans-grid, .triple-grid, .commerce-grid, .faq-grid { grid-template-columns: 1fr; }
-      .controls { grid-template-columns: 1fr; }
-      .cart-card { position: static; }
-    }
-    @media (max-width: 760px) {
-      .header-nav { width: 100%; justify-content: flex-start; }
-      .hero-stats, .checkout-grid { grid-template-columns: 1fr; }
-      .section-head { align-items: start; }
-      .header-actions .btn-secondary { display: none; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ELITE-SUBS | Premium Subscriptions</title>
+<meta name="description" content="Buy premium subscriptions, AI tools, streaming plans and more."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --pr:#c9a227;--pr2:#e8c252;--dk:#0a0a0a;--gld:linear-gradient(135deg,#c9a227,#f0d060,#c9a227);
+  --bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--surface:#1e1e1e;--surface2:#252525;--surface3:#2e2e2e;
+  --text:#f5f0e8;--muted:#a89880;--border:rgba(201,162,39,.18);--divider:rgba(201,162,39,.10);
+  --shadow-sm:0 8px 24px rgba(0,0,0,.45);--shadow-md:0 18px 48px rgba(0,0,0,.55);--shadow-lg:0 32px 72px rgba(0,0,0,.65);
+  --r:20px;--rf:999px;--wrap:1200px;
+}
+[data-theme="light"]{
+  --bg:#faf7f0;--bg2:#f5f0e6;--bg3:#ede8da;--surface:#fff;--surface2:#f9f5eb;--surface3:#f0ebd8;
+  --text:#1a140a;--muted:#7a6040;--border:rgba(150,110,30,.18);--divider:rgba(150,110,30,.10);
+  --shadow-sm:0 8px 24px rgba(100,70,10,.10);--shadow-md:0 18px 48px rgba(100,70,10,.14);--shadow-lg:0 32px 72px rgba(100,70,10,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0} html{scroll-behavior:smooth}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+img,svg{display:block;max-width:100%} a{color:inherit;text-decoration:none} button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none} :focus-visible{outline:2px solid var(--pr);outline-offset:3px;border-radius:6px}
+.container{width:min(calc(100% - 2rem),var(--wrap));margin:auto}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--divider)}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:var(--gld);box-shadow:var(--shadow-sm);font-size:22px}
+.logo-text{font-family:'Baloo 2',cursive;font-size:28px;font-weight:900;line-height:1;background:var(--gld);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.5px}
+.logo-tagline{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.nav{display:flex;gap:18px;flex-wrap:wrap}
+.nav a{font-size:14px;font-weight:700;color:var(--muted);transition:color .15s}
+.nav a:hover{color:var(--pr)}
+.hdr-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{width:46px;height:46px;border-radius:var(--rf);border:1px solid var(--border);display:grid;place-items:center;background:var(--surface)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:var(--rf);font-size:14px;font-weight:800;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:var(--gld);color:#0a0a0a;box-shadow:var(--shadow-md)}
+.btn-outline{border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow-sm)}
+
+/* HERO */
+.hero{padding:80px 0 48px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:center}
+.hero-eyebrow{display:inline-flex;gap:8px;align-items:center;background:color-mix(in srgb,var(--pr) 12%,var(--surface));border:1px solid var(--border);padding:10px 16px;border-radius:var(--rf);font-size:13px;font-weight:800;color:var(--pr)}
+.hero h1{font-family:'Baloo 2',cursive;font-size:clamp(44px,6vw,78px);line-height:.92;max-width:12ch;margin-top:14px;font-weight:900}
+.hero h1 span{background:var(--gld);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{margin-top:14px;color:var(--muted);font-size:17px;max-width:54ch}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.stat{padding:16px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.stat strong{display:block;font-family:'Baloo 2',cursive;font-size:34px;line-height:1;background:var(--gld);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-panel{padding:24px;border-radius:28px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.hero-panel::before{content:'';position:absolute;inset:-60px;background:radial-gradient(circle at 70% 20%,rgba(201,162,39,.12),transparent 55%);pointer-events:none}
+.bubble-row{display:flex;flex-wrap:wrap;gap:8px}
+.bubble{padding:9px 13px;border-radius:var(--rf);background:var(--surface2);border:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;padding:16px 0}
+.cat-btn{padding:10px 16px;border-radius:var(--rf);background:var(--surface);border:1px solid var(--border);font-size:13px;font-weight:800;color:var(--muted);transition:all .15s;box-shadow:var(--shadow-sm)}
+.cat-btn:hover,.cat-btn.active{background:var(--gld);color:#0a0a0a;border-color:transparent}
+.search-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:16px}
+.search{min-height:52px;border-radius:var(--rf);border:1px solid var(--border);background:var(--surface);padding:0 18px;box-shadow:var(--shadow-sm);color:var(--text);font-size:15px}
+.section{padding:64px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.section-head h2{font-family:'Baloo 2',cursive;font-size:clamp(34px,4vw,52px);font-weight:900;line-height:1;margin-top:8px}
+.section-head p{color:var(--muted);max-width:60ch}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;background:color-mix(in srgb,var(--pr) 10%,var(--surface));border:1px solid var(--border);padding:9px 14px;border-radius:var(--rf);font-size:13px;font-weight:800;color:var(--pr)}
+
+/* PRODUCT GRID */
+.products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.product-card{border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);padding:18px;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;display:grid;gap:12px;position:relative}
+.product-card:hover{transform:translateY(-5px) rotate(-.3deg);box-shadow:var(--shadow-md);border-color:var(--pr)}
+.product-icon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--pr) 12%,var(--surface2));border:1px solid var(--border)}
+.product-name{font-weight:800;font-size:16px;line-height:1.2}
+.product-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.product-cat{display:inline-flex;padding:5px 10px;border-radius:var(--rf);background:color-mix(in srgb,var(--pr) 12%,var(--surface2));color:var(--pr);font-size:12px;font-weight:800;border:1px solid var(--border)}
+.product-starting{font-size:13px;color:var(--muted);margin-top:2px}
+.product-starting strong{color:var(--pr);font-family:'Baloo 2',cursive;font-size:22px}
+.product-card .go-btn{margin-top:4px;width:100%;min-height:44px;border-radius:var(--rf);background:var(--gld);color:#0a0a0a;font-weight:800;font-size:14px;transition:opacity .15s}
+.product-card .go-btn:hover{opacity:.88}
+.hot-badge{position:absolute;top:12px;right:12px;background:var(--gld);color:#0a0a0a;padding:5px 9px;border-radius:var(--rf);font-size:11px;font-weight:900}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step{padding:20px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.step-num{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--gld);color:#0a0a0a;font-weight:900;font-size:22px;margin-bottom:12px}
+.step h3{font-size:20px;font-weight:800;margin-bottom:6px}
+.step p{color:var(--muted);font-size:14px}
+
+/* FOOTER */
+.footer{padding:32px 0 40px;border-top:1px solid var(--divider)}
+.footer-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+.footer-logo{font-family:'Baloo 2',cursive;font-size:22px;font-weight:900;background:var(--gld);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* WA FLOAT */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:50;width:60px;height:60px;border-radius:var(--rf);background:#25D366;display:grid;place-items:center;box-shadow:var(--shadow-lg);transition:transform .18s}
+.wa-float:hover{transform:scale(1.08)}
+.wa-float svg{width:32px;height:32px}
+
+.toast{position:fixed;right:16px;bottom:100px;z-index:60;max-width:300px;padding:14px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:700;font-size:14px;display:none}
+.toast.show{display:block}
+
+@media(max-width:1024px){.hero-grid,.products-grid{grid-template-columns:repeat(2,1fr)} .steps{grid-template-columns:1fr}}
+@media(max-width:640px){.products-grid{grid-template-columns:1fr} .hero-grid{grid-template-columns:1fr} .hero-stats{grid-template-columns:1fr} .search-row{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="container hdr-row">
+    <a class="logo" href="index.html" aria-label="ELITE-SUBS home">
+      <div class="logo-mark">★</div>
+      <div><div class="logo-text">ELITE-SUBS</div><div class="logo-tagline">Premium Digital Access</div></div>
+    </a>
+    <nav class="nav">
+      <a href="#products">Products</a>
+      <a href="#how">How it works</a>
+      <a href="https://wa.me/96181943935" target="_blank" rel="noopener">WhatsApp</a>
+    </nav>
+    <div class="hdr-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+      <a class="btn btn-gold" href="https://wa.me/96181943935" target="_blank" rel="noopener">Order now</a>
+    </div>
+  </div>
+</header>
 
-  <header class="site-header">
-    <div class="container header-row">
-      <a class="brand" href="#top" aria-label="VaultStore home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M5 11.5 12 4l7 7.5"></path><path d="M7 11v8h10v-8"></path><path d="M10 13.5h4"></path>
-          </svg>
-        </span>
-        <span class="brand-name">VaultStore</span>
-      </a>
-      <nav class="header-nav" aria-label="Primary navigation">
-        <a href="#plans">Plans</a>
-        <a href="#how-it-works">How it works</a>
-        <a href="#checkout">Checkout</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-      <div class="header-actions">
-        <button class="icon-btn" type="button" aria-label="Switch color theme" data-theme-toggle>🌙</button>
-        <a class="btn btn-secondary" href="#plans">Browse deals</a>
-        <a class="btn btn-primary" href="#checkout">Purchase now</a>
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-eyebrow">⚡ Instant delivery &bull; 🛡️ Trusted &bull; 💬 24/7 WhatsApp support</span>
+      <h1>Premium subs &amp; accounts. <span>Fast, cheap, real.</span></h1>
+      <p class="hero-sub">Browse 55+ products across AI tools, streaming, music, gaming, and more. Pick a plan, choose your duration, and order directly on WhatsApp in seconds.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#products">Shop all products</a>
+        <a class="btn btn-outline" href="https://wa.me/96181943935" target="_blank" rel="noopener">💬 WhatsApp us</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>55+</strong><span>Products available</span></div>
+        <div class="stat"><strong>Fast</strong><span>Instant delivery</span></div>
+        <div class="stat"><strong>24/7</strong><span>WhatsApp support</span></div>
       </div>
     </div>
-  </header>
-
-  <main id="main">
-    <section class="section" id="top">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">⚡ Fast delivery • 🛒 Live cart • 🎉 Fun storefront</span>
-          <h1>Choose a plan, build your cart, and buy in a few clicks.</h1>
-          <p>VaultStore is a playful storefront demo for subscriptions, premium bundles, and digital plan offers. Customers can compare pricing, switch billing cycles, add plans to the cart, and walk through a full purchase-style flow on one page.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#plans">Explore plans</a>
-            <a class="btn btn-secondary" href="#how-it-works">See how it works</a>
-          </div>
-          <div class="hero-stats" aria-label="Store highlights">
-            <article class="stat-card"><strong>1200+</strong><span>Orders shown this week</span></article>
-            <article class="stat-card"><strong>30 sec</strong><span>Average demo checkout</span></article>
-            <article class="stat-card"><strong>24/7</strong><span>Support vibe and trust cues</span></article>
-          </div>
+    <div class="hero-panel">
+      <span class="eyebrow" style="margin-bottom:14px;display:inline-flex">🔥 Most popular right now</span>
+      <div style="margin-top:12px;display:grid;gap:10px">
+        <div class="bubble-row">
+          <span class="bubble">🤖 ChatGPT Plus $8/mo</span>
+          <span class="bubble">🎬 Netflix 4K $3/mo</span>
+          <span class="bubble">🤖 Cursor $20/mo</span>
+          <span class="bubble">🎵 Spotify $7/3mo</span>
+          <span class="bubble">🎮 Fortnite $8/mo</span>
+          <span class="bubble">🧰 Canva Lifetime $5</span>
         </div>
-
-        <aside class="hero-panel" aria-label="Marketplace preview panel">
-          <div class="dashboard-stack">
-            <div class="dashboard-top">
-              <div>
-                <span class="eyebrow">🔥 Popular today</span>
-                <h2 style="margin-top:.8rem; font-family:var(--font-display); font-size:var(--text-xl); line-height:1;">Starter seller dashboard</h2>
-              </div>
-              <strong class="dashboard-price">$29</strong>
-            </div>
-            <p class="muted">A colorful storefront layout with product cards, quick checkout, pricing control, and buyer-friendly trust blocks.</p>
-            <div>
-              <div style="display:flex; justify-content:space-between; gap:.75rem; margin-bottom:.5rem; font-size:var(--text-sm); font-weight:800;">
-                <span class="muted">Checkout completion</span><span>81%</span>
-              </div>
-              <div class="mini-progress"><span></span></div>
-            </div>
-            <div class="bubble-row" aria-label="Quick product ideas">
-              <span class="bubble">Streaming pack</span>
-              <span class="bubble">Music family</span>
-              <span class="bubble">Game pass</span>
-              <span class="bubble">VPN access</span>
-              <span class="bubble">Creator suite</span>
-            </div>
-            <button class="btn btn-primary" type="button" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">Start shopping</button>
-          </div>
-        </aside>
+        <p style="color:var(--muted);font-size:14px;margin-top:4px">Click any product card to see all available durations and order directly via WhatsApp.</p>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="section" id="plans">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Interactive pricing</span>
-            <h2>Pick the subscription you want</h2>
-          </div>
-          <p>Use the search, category filter, and billing switch to browse plans. Each card has pricing, features, add-to-cart controls, and fun visual tags.</p>
-        </div>
-        <div class="controls" aria-label="Pricing controls">
-          <input id="searchInput" class="search" type="search" placeholder="Search Netflix-style, game pass, VPN, creator..." aria-label="Search plans" />
-          <select id="categoryFilter" class="select" aria-label="Filter category">
-            <option value="all">All categories</option>
-            <option value="streaming">Streaming</option>
-            <option value="gaming">Gaming</option>
-            <option value="productivity">Productivity</option>
-          </select>
-          <div class="billing-toggle" role="tablist" aria-label="Billing mode">
-            <button type="button" class="active" data-billing="monthly">Monthly</button>
-            <button type="button" data-billing="yearly">Yearly</button>
-          </div>
-        </div>
-        <div id="plansGrid" class="plans-grid" aria-live="polite"></div>
-      </div>
-    </section>
+<section class="section" id="products">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">All products</span><h2>Choose what you need</h2></div>
+      <p>Click a product to see all pricing options and durations.</p>
+    </div>
+    <div class="search-row">
+      <input id="searchInput" class="search" type="search" placeholder="Search Netflix, ChatGPT, Canva, Cursor..."/>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div id="productsGrid" class="products-grid"></div>
+  </div>
+</section>
 
-    <section class="section" id="how-it-works">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Smooth buyer flow</span>
-            <h2>How the storefront works</h2>
-          </div>
-          <p>The page is built so visitors can understand the whole process quickly, from comparing offers to placing an order.</p>
-        </div>
-        <div class="triple-grid">
-          <article class="step-card"><div class="icon-box">1</div><h3>Compare offers</h3><p class="muted">Buyers scan cards, switch monthly or yearly pricing, and read the included features before choosing.</p></article>
-          <article class="step-card"><div class="icon-box">2</div><h3>Add to cart</h3><p class="muted">They tap the button, stack several plans together, and instantly see totals and discounts update.</p></article>
-          <article class="step-card"><div class="icon-box">3</div><h3>Purchase fast</h3><p class="muted">The form captures buyer details, shows payment choices, and finishes with a purchase confirmation toast.</p></article>
-        </div>
-      </div>
-    </section>
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">Simple process</span><h2>How to order</h2></div>
+      <p>Buying from ELITE-SUBS takes under 2 minutes from start to delivery.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h3>Pick a product</h3><p>Browse all 55+ products. Use the search or category filter to find what you need.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>Choose a plan</h3><p>Click the product card to open the plan page. Select your duration (1 month, 3 months, 6 months, or 1 year).</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Order on WhatsApp</h3><p>Tap the WhatsApp button with your selected plan. We confirm and deliver fast.</p></div>
+    </div>
+  </div>
+</section>
+</main>
 
-    <section class="section">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Trust builders</span>
-            <h2>Extra blocks buyers expect</h2>
-          </div>
-          <p>These sections help the store feel more complete by showing support, security, and bundle-style offers that make the marketplace feel active.</p>
-        </div>
-        <div class="triple-grid">
-          <article class="trust-card"><div class="icon-box">🛡️</div><h3>Secure order feel</h3><p class="muted">The layout leaves room for trust badges, delivery notes, and buyer protection messages.</p></article>
-          <article class="trust-card"><div class="icon-box">💬</div><h3>Support ready</h3><p class="muted">You can later connect this to live chat, ticket forms, or a help center area.</p></article>
-          <article class="trust-card"><div class="icon-box">🎁</div><h3>Promo bundles</h3><p class="muted">The design already supports limited drops, combo packs, and highlighted best-seller deals.</p></article>
-        </div>
-      </div>
-    </section>
+<footer class="footer">
+  <div class="container footer-row">
+    <div><div class="footer-logo">ELITE-SUBS</div><div style="margin-top:4px;color:var(--muted);font-size:13px">Premium Digital Access</div></div>
+    <div style="text-align:right"><a href="https://wa.me/96181943935" style="color:var(--pr);font-weight:800">💬 WhatsApp: +961 81943935</a><div style="margin-top:4px;color:var(--muted);font-size:13px">Available 24/7</div></div>
+  </div>
+</footer>
 
-    <section class="section" id="checkout">
-      <div class="container commerce-grid">
+<a class="wa-float" href="https://wa.me/96181943935" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const products = [{"id": "chatgpt-pro", "name": "ChatGPT Pro", "category": "AI", "icon": "🤖", "subtitle": "0 problems", "prices": {"1 Month": "$50 x5 / $85 x10 / $20", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Zero issues guaranteed", "Stable access", "Personal account", "Multiple tier pricing"]}, {"id": "chatgpt-business", "name": "ChatGPT Business", "category": "AI", "icon": "🤖", "subtitle": "Monthly renew", "prices": {"1 Month": "$7", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Business plan", "Auto monthly renewal", "Reliable access", "No interruptions"]}, {"id": "chatgpt-plus", "name": "ChatGPT Plus", "category": "AI", "icon": "🤖", "subtitle": "0 problems, no chat loss", "prices": {"1 Month": "$8", "3 Months": "$20", "6 Months": null, "1 Year": "$60"}, "features": ["No chat history loss", "Smooth experience", "Great value yearly", "Zero problems"]}, {"id": "chatgpt-go", "name": "ChatGPT Go", "category": "AI", "icon": "🤖", "subtitle": "0 problems", "prices": {"1 Month": null, "3 Months": null, "6 Months": null, "1 Year": "$20"}, "features": ["Zero problems", "Yearly plan only", "Stable account", "Easy delivery"]}, {"id": "chatgpt-plus-shared", "name": "ChatGPT Plus Shared", "category": "AI", "icon": "🤖", "subtitle": "1 device", "prices": {"1 Month": "$4", "3 Months": "$10", "6 Months": "$17", "1 Year": "$25"}, "features": ["Shared device plan", "All durations available", "Budget friendly", "Fast delivery"]}, {"id": "netflix-1user", "name": "Netflix 1 User", "category": "Streaming", "icon": "🎬", "subtitle": "1 user 4K", "prices": {"1 Month": "$3", "3 Months": "$8", "6 Months": "$16", "1 Year": "$30"}, "features": ["4K ultra HD", "1 screen", "All durations", "Instant delivery"]}, {"id": "netflix-3users", "name": "Netflix 3 Users", "category": "Streaming", "icon": "🎬", "subtitle": "3 users 4K", "prices": {"1 Month": "$8", "3 Months": null, "6 Months": null, "1 Year": "$100"}, "features": ["4K quality", "3 screens", "Best for families", "Yearly deal available"]}, {"id": "spotify", "name": "Spotify", "category": "Music", "icon": "🎵", "subtitle": "Premium", "prices": {"1 Month": null, "3 Months": "$7", "6 Months": "$14", "1 Year": "$23"}, "features": ["Ad-free music", "Offline listening", "HD audio", "All durations"]}, {"id": "anghami", "name": "Anghami", "category": "Music", "icon": "🎵", "subtitle": "Premium", "prices": {"1 Month": null, "3 Months": "$5", "6 Months": "$10", "1 Year": "$16"}, "features": ["Arab music library", "Ad-free", "Offline mode", "Regional plan"]}, {"id": "shahid-3users", "name": "Shahid 3 Users", "category": "Streaming", "icon": "🎬", "subtitle": "3 users", "prices": {"1 Month": "$5", "3 Months": null, "6 Months": null, "1 Year": "$30"}, "features": ["Arab content", "3 screens", "Monthly or yearly", "Fast delivery"]}, {"id": "shahid-1user", "name": "Shahid 1 User", "category": "Streaming", "icon": "🎬", "subtitle": "1 user", "prices": {"1 Month": "$2.5", "3 Months": "$6", "6 Months": null, "1 Year": "$15"}, "features": ["Arab content", "Personal screen", "Affordable", "Multiple durations"]}, {"id": "disney-plus", "name": "Disney+", "category": "Streaming", "icon": "🎬", "subtitle": "1 user premium", "prices": {"1 Month": "$5", "3 Months": null, "6 Months": null, "1 Year": "$47"}, "features": ["Disney + Marvel + Star Wars", "Premium quality", "Personal account", "Monthly or yearly"]}, {"id": "amazon-prime", "name": "Amazon Prime", "category": "Streaming", "icon": "🎬", "subtitle": "1 user", "prices": {"1 Month": "$5", "3 Months": "$6", "6 Months": "$25", "1 Year": "$35"}, "features": ["Prime video access", "Fast delivery included", "All durations", "Great value"]}, {"id": "capcut", "name": "CapCut", "category": "Productivity", "icon": "🧰", "subtitle": "Pro", "prices": {"1 Month": "$4", "3 Months": null, "6 Months": "$25", "1 Year": "$33"}, "features": ["Pro editing tools", "No watermark", "Templates", "Monthly or yearly"]}, {"id": "adobe-cc", "name": "Adobe Creative Cloud", "category": "Productivity", "icon": "🎨", "subtitle": "Creative suite", "prices": {"1 Month": "$5", "3 Months": null, "6 Months": null, "1 Year": "$31"}, "features": ["All Adobe apps", "Cloud storage", "Photoshop + Premiere", "Personal license"]}, {"id": "linkedin", "name": "LinkedIn Premium", "category": "Productivity", "icon": "🧰", "subtitle": "Career plan", "prices": {"1 Month": null, "3 Months": "$10", "6 Months": null, "1 Year": null}, "features": ["InMail credits", "Profile insights", "Job seeker tools", "3-month plan"]}, {"id": "coursera", "name": "Coursera", "category": "Education", "icon": "📚", "subtitle": "Learning plan", "prices": {"1 Month": null, "3 Months": null, "6 Months": "$30", "1 Year": "$50"}, "features": ["Unlimited courses", "Certificates", "Skill tracks", "Learn at your pace"]}, {"id": "google-ai-pro", "name": "Google AI Pro", "category": "AI", "icon": "🤖", "subtitle": "Gemini", "prices": {"1 Month": "$5", "3 Months": "$10", "6 Months": null, "1 Year": "$30"}, "features": ["Gemini advanced", "Google integration", "AI productivity", "All main durations"]}, {"id": "google-ai-ultra", "name": "Google AI Ultra", "category": "AI", "icon": "🤖", "subtitle": "Antigravity / Veo3 Ultra", "prices": {"1 Month": "$20", "3 Months": null, "6 Months": null, "1 Year": "$200"}, "features": ["Veo3 video AI", "Top-tier Gemini", "Ultra access", "Most powerful plan"]}, {"id": "cursor", "name": "Cursor", "category": "AI", "icon": "🤖", "subtitle": "AI coding assistant", "prices": {"1 Month": "$20", "3 Months": null, "6 Months": null, "1 Year": "$100"}, "features": ["AI code suggestions", "VS Code based", "Monthly or yearly", "Developer tool"]}, {"id": "quillbot", "name": "QuillBot", "category": "Productivity", "icon": "🧰", "subtitle": "Writing assistant", "prices": {"1 Month": "$4", "3 Months": null, "6 Months": null, "1 Year": "$22"}, "features": ["AI paraphrasing", "Grammar check", "Summarizer", "Monthly or yearly"]}, {"id": "turnitin", "name": "Turnitin", "category": "Education", "icon": "📚", "subtitle": "Plagiarism checker", "prices": {"1 Month": "$10", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Plagiarism detection", "Academic tool", "Monthly access", "Trusted worldwide"]}, {"id": "autodesk", "name": "Autodesk", "category": "Design", "icon": "🎨", "subtitle": "1 device", "prices": {"1 Month": "$9", "3 Months": "$18", "6 Months": null, "1 Year": "$35"}, "features": ["CAD tools", "1 device license", "Professional suite", "Multiple durations"]}, {"id": "solidworks", "name": "Solidworks Premium", "category": "Design", "icon": "🎨", "subtitle": "1 device", "prices": {"1 Month": null, "3 Months": null, "6 Months": null, "1 Year": "$40"}, "features": ["3D modeling", "Premium tools", "1 device", "Yearly plan only"]}, {"id": "perplexity", "name": "Perplexity Pro", "category": "AI", "icon": "🤖", "subtitle": "AI search", "prices": {"1 Month": "$8", "3 Months": null, "6 Months": null, "1 Year": "$37.5"}, "features": ["Pro AI search", "No limits", "Sources included", "Monthly or yearly"]}, {"id": "picsart-pro", "name": "Picsart Pro", "category": "Design", "icon": "🎨", "subtitle": "Creative editing", "prices": {"1 Month": "$4", "3 Months": "$10", "6 Months": null, "1 Year": "$22"}, "features": ["Pro editing", "Templates", "AI tools", "Multiple durations"]}, {"id": "claude-pro", "name": "Claude Pro", "category": "AI", "icon": "🤖", "subtitle": "Shared / Private", "prices": {"1 Month": "$11 shared", "3 Months": null, "6 Months": "$100 private", "1 Year": null}, "features": ["Advanced AI", "Shared or private", "Long context", "Trusted AI assistant"]}, {"id": "gamma-ai", "name": "Gamma AI Pro", "category": "AI", "icon": "🤖", "subtitle": "Presentations", "prices": {"1 Month": "$10", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["AI presentations", "Slides in seconds", "Pro templates", "Monthly plan"]}, {"id": "camscanner", "name": "CamScanner", "category": "Productivity", "icon": "🧰", "subtitle": "Pro scanner", "prices": {"1 Month": null, "3 Months": null, "6 Months": "$24", "1 Year": "$43.5"}, "features": ["PDF scanner", "OCR tools", "Cloud storage", "6-month or yearly"]}, {"id": "grok-super", "name": "Grok Super", "category": "AI", "icon": "🤖", "subtitle": "AI assistant", "prices": {"1 Month": "$15", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Grok AI access", "Super plan", "xAI powered", "Monthly plan"]}, {"id": "scribd", "name": "Scribd Shared", "category": "Education", "icon": "📚", "subtitle": "Shared reading plan", "prices": {"1 Month": "$5", "3 Months": null, "6 Months": "$20", "1 Year": "$30"}, "features": ["Books + audiobooks", "Unlimited reading", "Shared plan", "Multiple durations"]}, {"id": "lovable-ai", "name": "Lovable AI Pro", "category": "AI", "icon": "🤖", "subtitle": "Builder plan", "prices": {"1 Month": "$15", "3 Months": "$37", "6 Months": null, "1 Year": null}, "features": ["App builder AI", "Pro features", "Fast prototyping", "1 or 3 months"]}, {"id": "ask-ai", "name": "Ask AI Pro", "category": "AI", "icon": "🤖", "subtitle": "AI assistant", "prices": {"1 Month": null, "3 Months": null, "6 Months": null, "1 Year": "$30"}, "features": ["Pro assistant", "Yearly plan only", "Smart answers", "Reliable AI"]}, {"id": "snapchat-plus", "name": "Snapchat+", "category": "Social", "icon": "💬", "subtitle": "Premium features", "prices": {"1 Month": "$5", "3 Months": "$7.5", "6 Months": "$13", "1 Year": "$25"}, "features": ["Exclusive features", "Custom themes", "Story rewatch", "All durations"]}, {"id": "grammarly", "name": "Grammarly", "category": "Productivity", "icon": "🧰", "subtitle": "Writing tools", "prices": {"1 Month": "$10", "3 Months": "$25", "6 Months": null, "1 Year": "$45"}, "features": ["Grammar check", "AI writing", "Tone detection", "Multiple durations"]}, {"id": "office365", "name": "Microsoft Office 365", "category": "Productivity", "icon": "🧰", "subtitle": "Office suite", "prices": {"1 Month": null, "3 Months": null, "6 Months": null, "1 Year": "$17"}, "features": ["Word, Excel, PowerPoint", "OneDrive 1TB", "1 year plan", "All Office apps"]}, {"id": "crunchyroll", "name": "Crunchyroll Mega Fan", "category": "Streaming", "icon": "🎬", "subtitle": "Anime streaming", "prices": {"1 Month": "$5", "3 Months": "$15", "6 Months": "$20", "1 Year": "$24"}, "features": ["Mega Fan plan", "All anime content", "Offline viewing", "All durations"]}, {"id": "youtube", "name": "YouTube Premium", "category": "Streaming", "icon": "🎬", "subtitle": "Premium access", "prices": {"1 Month": null, "3 Months": "$17", "6 Months": null, "1 Year": "$27"}, "features": ["No ads", "Background play", "YouTube Music", "3-month or yearly"]}, {"id": "bein-iptv", "name": "BEIN IPTV", "category": "Streaming", "icon": "🎬", "subtitle": "Sports and live TV", "prices": {"1 Month": null, "3 Months": "$10", "6 Months": "$18", "1 Year": "$30"}, "features": ["Live sports", "IPTV channels", "HD streams", "3-month to yearly"]}, {"id": "telegram", "name": "Telegram Premium", "category": "Social", "icon": "💬", "subtitle": "Premium features", "prices": {"1 Month": null, "3 Months": "$20", "6 Months": "$30", "1 Year": "$45"}, "features": ["Faster downloads", "Exclusive stickers", "No ads", "All durations"]}, {"id": "apple-music", "name": "Apple Music", "category": "Music", "icon": "🎵", "subtitle": "Premium audio", "prices": {"1 Month": "$5", "3 Months": "$12", "6 Months": null, "1 Year": null}, "features": ["100M+ songs", "Lossless audio", "iCloud Music Library", "1 or 3 months"]}, {"id": "watchit", "name": "Watch It", "category": "Streaming", "icon": "🎬", "subtitle": "Arab regional content", "prices": {"1 Month": "$7", "3 Months": null, "6 Months": null, "1 Year": "$40"}, "features": ["Arabic series & movies", "Regional content", "Monthly or yearly", "Fast delivery"]}, {"id": "duolingo", "name": "Duolingo", "category": "Education", "icon": "📚", "subtitle": "Language learning", "prices": {"1 Month": "$5", "3 Months": "$12", "6 Months": null, "1 Year": "$35"}, "features": ["No ads", "Unlimited hearts", "Super plan", "All main durations"]}, {"id": "planetvpn", "name": "Planet VPN", "category": "Productivity", "icon": "🧰", "subtitle": "VPN access", "prices": {"1 Month": "$4", "3 Months": "$8", "6 Months": "$12", "1 Year": "$16"}, "features": ["Private browsing", "All server locations", "Fast speeds", "All durations available"]}, {"id": "fortnite-crew", "name": "Fortnite Crew", "category": "Gaming", "icon": "🎮", "subtitle": "Monthly pack", "prices": {"1 Month": "$8", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Monthly skin pack", "V-Bucks included", "Battle Pass", "Monthly plan only"]}, {"id": "canva-lifetime", "name": "Canva Lifetime", "category": "Productivity", "icon": "🧰", "subtitle": "One-time lifetime access", "prices": {"1 Month": "$5", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Lifetime access", "All Pro features", "Unlimited designs", "One-time price"]}, {"id": "office-keys", "name": "Microsoft Office Keys", "category": "Productivity", "icon": "🧰", "subtitle": "License key", "prices": {"1 Month": "$9", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Genuine license key", "Instant delivery", "Activate immediately", "One-time purchase"]}, {"id": "tiktok-creativity", "name": "TikTok Creativity Program", "category": "Social", "icon": "💬", "subtitle": "Creator access", "prices": {"1 Month": "$9", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Creativity program access", "Monetization help", "Creator tools", "One-time setup"]}, {"id": "windows-pro", "name": "Windows Pro", "category": "Productivity", "icon": "🧰", "subtitle": "License key", "prices": {"1 Month": "$6", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Windows Pro key", "Instant activation", "Genuine license", "One-time purchase"]}, {"id": "free-fire-pass", "name": "Free Fire Pass", "category": "Gaming", "icon": "🎮", "subtitle": "Battle pass", "prices": {"1 Month": "$4", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["Battle Pass rewards", "Exclusive skins", "Monthly pass", "Instant delivery"]}, {"id": "ideogram-ai", "name": "Ideogram AI", "category": "AI", "icon": "🤖", "subtitle": "AI image generation", "prices": {"1 Month": "$15", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["AI image creation", "Text rendering", "Pro quality", "Monthly plan"]}, {"id": "hailuo-ai", "name": "Hailuo AI", "category": "AI", "icon": "🤖", "subtitle": "AI video tool", "prices": {"1 Month": "$8", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["AI video generation", "Creative tools", "Monthly plan", "Fast output"]}, {"id": "openart-ai", "name": "OpenArt AI", "category": "AI", "icon": "🤖", "subtitle": "AI art tool", "prices": {"1 Month": "$13", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["AI artwork", "Custom styles", "Pro plan", "Monthly access"]}, {"id": "manus-ai", "name": "Manus AI", "category": "AI", "icon": "🤖", "subtitle": "3000 credits", "prices": {"1 Month": "$6", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["3000 credits pack", "Task automation", "AI agent", "Credit-based plan"]}, {"id": "jarvis-ai", "name": "Jarvis AI", "category": "AI", "icon": "🤖", "subtitle": "AI assistant", "prices": {"1 Month": "$5", "3 Months": null, "6 Months": null, "1 Year": null}, "features": ["AI assistant pro", "Smart replies", "Monthly plan", "Easy access"]}];
+
+const categories = ['All', ...new Set(products.map(p => p.category))].sort((a,b) => a==='All'?-1:b==='All'?1:a.localeCompare(b));
+let activeCategory = 'All';
+const grid = document.getElementById('productsGrid');
+const filterBar = document.getElementById('filterBar');
+const searchInput = document.getElementById('searchInput');
+const themeToggle = document.getElementById('themeToggle');
+const toast = document.getElementById('toast');
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+function startingPrice(p) {
+  const vals = Object.values(p.prices).filter(v => v !== null);
+  return vals.length ? vals[0] : null;
+}
+
+categories.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn' + (cat === 'All' ? ' active' : '');
+  btn.textContent = cat;
+  btn.addEventListener('click', () => {
+    activeCategory = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.textContent === cat));
+    renderGrid();
+  });
+  filterBar.appendChild(btn);
+});
+
+const hotIds = ['chatgpt-plus','netflix-1user','cursor','crunchyroll','snapchat-plus','planetvpn'];
+
+function renderGrid() {
+  const q = searchInput.value.trim().toLowerCase();
+  const visible = products.filter(p => {
+    const matchCat = activeCategory === 'All' || p.category === activeCategory;
+    const hay = (p.name + ' ' + p.subtitle + ' ' + p.category).toLowerCase();
+    return matchCat && (!q || hay.includes(q));
+  });
+  if (!visible.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--muted);text-align:center;font-weight:700">No products found. Try a different search.</div>';
+    return;
+  }
+  grid.innerHTML = visible.map(p => {
+    const sp = startingPrice(p);
+    const isHot = hotIds.includes(p.id);
+    return `<article class="product-card" onclick="location.href='product.html?id=${p.id}'" role="button" tabindex="0" aria-label="${p.name}">
+      ${isHot ? '<span class="hot-badge">🔥 Hot</span>' : ''}
+      <div style="display:flex;gap:12px;align-items:start">
+        <div class="product-icon">${p.icon}</div>
         <div>
-          <div class="section-head">
-            <div>
-              <span class="eyebrow">Cart + checkout</span>
-              <h2>Review plans and complete purchase</h2>
-            </div>
-            <p>This is a front-end checkout demo with coupon logic, totals, and interactive purchase feedback. It is ready to publish as a static site and later connect to real payments.</p>
-          </div>
-          <article class="checkout-card">
-            <h3>Buyer details</h3>
-            <p class="muted">Fill the form to simulate an order. The demo does not charge real money.</p>
-            <div class="notice">Before a real launch, you would still need backend order handling, payment integration, and policy pages.</div>
-            <form id="checkoutForm">
-              <div class="checkout-grid">
-                <div class="field"><label for="buyerName">Full name</label><input id="buyerName" name="buyerName" type="text" placeholder="John Smith" required /></div>
-                <div class="field"><label for="buyerEmail">Email address</label><input id="buyerEmail" name="buyerEmail" type="email" placeholder="you@example.com" required /></div>
-                <div class="field full"><label for="productNote">Order note</label><input id="productNote" name="productNote" type="text" placeholder="Example: need premium access today" /></div>
-                <div class="field"><label for="region">Region</label><select id="region" name="region"><option>Global</option><option>Middle East</option><option>Europe</option><option>North America</option></select></div>
-                <div class="field"><label for="coupon">Coupon</label><input id="coupon" name="coupon" type="text" placeholder="SAVE10" /></div>
-              </div>
-            </form>
-            <div>
-              <p style="font-weight:800; margin-top:1rem;">Payment options</p>
-              <div class="pay-row" aria-label="Payment methods">
-                <span class="pay-pill">💳 Card</span>
-                <span class="pay-pill">🅿️ PayPal</span>
-                <span class="pay-pill">🪙 Crypto</span>
-                <span class="pay-pill">🏦 Bank transfer</span>
-              </div>
-            </div>
-            <button id="purchaseBtn" class="btn btn-primary" type="submit" form="checkoutForm">Complete purchase</button>
-          </article>
-        </div>
-
-        <aside class="cart-card" aria-live="polite">
-          <div>
-            <span class="eyebrow">🛒 Your cart</span>
-            <h3>Selected products</h3>
-          </div>
-          <div id="cartState" class="cart-empty">No items yet. Add a plan to see your total here.</div>
-          <div id="cartItems" class="cart-list"></div>
-          <div class="summary-line"><span>Subtotal</span><strong id="subtotalValue">$0</strong></div>
-          <div class="summary-line"><span>Service fee</span><strong id="feeValue">$0</strong></div>
-          <div class="summary-line"><span>Discount</span><strong id="discountValue">-$0</strong></div>
-          <div class="summary-line total"><span>Total</span><strong id="totalValue">$0</strong></div>
-        </aside>
-      </div>
-    </section>
-
-    <section class="section" id="faq">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">FAQ</span>
-            <h2>Common buyer questions</h2>
-          </div>
-          <p>The FAQ cards give your storefront a more complete marketplace feel and answer the questions most shoppers ask first.</p>
-        </div>
-        <div class="faq-grid">
-          <article class="faq-card"><h3>Can buyers switch between monthly and yearly plans?</h3><p class="muted">Yes. The toggle changes pricing on the cards instantly so visitors can compare billing options fast.</p></article>
-          <article class="faq-card"><h3>Does the cart update live?</h3><p class="muted">Yes. Adding or removing items updates subtotal, fee, discount, and total in real time.</p></article>
-          <article class="faq-card"><h3>Can this turn into a real store later?</h3><p class="muted">Yes. A developer can connect this front-end demo to a database, payment gateway, and order system.</p></article>
-          <article class="faq-card"><h3>Will it work on phones?</h3><p class="muted">Yes. The layout stacks cleanly on mobile and keeps buttons large enough for touch use.</p></article>
+          <div class="product-name">${p.name}</div>
+          <div class="product-sub">${p.subtitle}</div>
         </div>
       </div>
-    </section>
-  </main>
+      <span class="product-cat">${p.category}</span>
+      ${sp ? `<div class="product-starting">From <strong>${sp}</strong></div>` : ''}
+      <button class="go-btn">View plans →</button>
+    </article>`;
+  }).join('');
+  grid.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') card.click(); });
+  });
+}
 
-  <footer class="footer">
-    <div class="container footer-row">
-      <p>VaultStore demo storefront for subscriptions, digital plans, and account bundles.</p>
-      <p>Single-file site ready for GitHub Pages.</p>
-    </div>
-  </footer>
+searchInput.addEventListener('input', renderGrid);
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+document.documentElement.setAttribute('data-theme', theme);
+themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+themeToggle.addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('es-theme', theme);
+});
+const saved = localStorage.getItem('es-theme');
+if (saved) { theme = saved; document.documentElement.setAttribute('data-theme', theme); themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙'; }
 
-  <script>
-    const plans = [
-      { id:'stream-premium', name:'StreamPop Premium', category:'streaming', icon:'🎬', monthly:12, yearly:99, popular:true, description:'Top streaming-style bundle with fun pricing and quick delivery feel.', features:['HD-style access','Fast order handling','Buyer help included','Instant cart checkout'], tags:['Best seller','Fast','Popular'] },
-      { id:'music-family', name:'MusicFlow Family', category:'streaming', icon:'🎵', monthly:8, yearly:72, popular:false, description:'Affordable music-style plan for buyers who want a cheaper recurring option.', features:['Budget-friendly','Family-style offer','Great starter plan','Quick add to cart'], tags:['Starter','Low cost','Family'] },
-      { id:'game-ultimate', name:'GameRush Ultimate', category:'gaming', icon:'🎮', monthly:15, yearly:129, popular:false, description:'Gaming-focused subscription with a high-energy product card and premium upsell feel.', features:['Gaming-style access','Promo-ready card','Mobile-friendly flow','Add-on ready'], tags:['Gaming','Trending','Instant'] },
-      { id:'creator-suite', name:'CreatorPro Suite', category:'productivity', icon:'🎨', monthly:11, yearly:89, popular:false, description:'Creative productivity package for design-heavy shoppers and bundle deals.', features:['Creator tools feel','Freelancer-friendly','Simple plan structure','Smooth checkout'], tags:['Creative','Design','Pro'] },
-      { id:'shield-vpn', name:'ShieldVPN Plus', category:'productivity', icon:'🛡️', monthly:9, yearly:75, popular:false, description:'Security-style plan that works well as an extra add-on in the cart.', features:['Privacy-focused','Strong yearly savings','Great upsell item','Fast checkout'], tags:['Security','Reliable','Add-on'] },
-      { id:'mega-bundle', name:'MegaMix Bundle', category:'streaming', icon:'🎁', monthly:22, yearly:179, popular:true, description:'Large combo bundle for shoppers who want several products inside one order.', features:['Bundle savings','Stacked value','Built for upsells','Repeat-order friendly'], tags:['Bundle','High value','Combo'] }
-    ];
-
-    const cart = [];
-    let billingMode = 'monthly';
-
-    const plansGrid = document.getElementById('plansGrid');
-    const searchInput = document.getElementById('searchInput');
-    const categoryFilter = document.getElementById('categoryFilter');
-    const billingButtons = document.querySelectorAll('[data-billing]');
-    const cartItems = document.getElementById('cartItems');
-    const cartState = document.getElementById('cartState');
-    const subtotalValue = document.getElementById('subtotalValue');
-    const feeValue = document.getElementById('feeValue');
-    const discountValue = document.getElementById('discountValue');
-    const totalValue = document.getElementById('totalValue');
-    const couponInput = document.getElementById('coupon');
-    const checkoutForm = document.getElementById('checkoutForm');
-    const purchaseBtn = document.getElementById('purchaseBtn');
-    const themeToggle = document.querySelector('[data-theme-toggle]');
-    const toast = document.getElementById('toast');
-
-    function money(value) { return `$${value}`; }
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2400);
-    }
-
-    function filteredPlans() {
-      const search = searchInput.value.trim().toLowerCase();
-      const category = categoryFilter.value;
-      return plans.filter(plan => {
-        const matchesCategory = category === 'all' || plan.category === category;
-        const haystack = `${plan.name} ${plan.description} ${plan.category} ${plan.tags.join(' ')}`.toLowerCase();
-        const matchesSearch = !search || haystack.includes(search);
-        return matchesCategory && matchesSearch;
-      });
-    }
-
-    function renderPlans() {
-      const visible = filteredPlans();
-      if (!visible.length) {
-        plansGrid.innerHTML = '<div class="cart-empty">No plans match your search yet. Try another keyword or category.</div>';
-        return;
-      }
-      plansGrid.innerHTML = visible.map(plan => {
-        const price = plan[billingMode];
-        const suffix = billingMode === 'monthly' ? '/month' : '/year';
-        return `
-          <article class="plan-card ${plan.popular ? 'popular' : ''}">
-            ${plan.popular ? '<span class="tag">Fan favorite</span>' : ''}
-            <div class="plan-top">
-              <div>
-                <div class="plan-icon" aria-hidden="true">${plan.icon}</div>
-                <h3 style="margin-top:.9rem; font-size:var(--text-lg);">${plan.name}</h3>
-                <p class="muted" style="margin-top:.45rem;">${plan.description}</p>
-              </div>
-            </div>
-            <div class="plan-price"><strong>${money(price)}</strong><span class="muted" style="font-weight:800;">${suffix}</span></div>
-            <ul class="features">${plan.features.map(item => `<li>${item}</li>`).join('')}</ul>
-            <div class="chips">${plan.tags.map(tag => `<span class="chip">${tag}</span>`).join('')}</div>
-            <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
-              <button class="btn btn-primary" type="button" onclick="addToCart('${plan.id}')">Add to cart</button>
-              <button class="btn btn-ghost" type="button" onclick="showToast('${plan.name} details opened.')">View details</button>
-            </div>
-          </article>`;
-      }).join('');
-    }
-
-    function addToCart(planId) {
-      const plan = plans.find(item => item.id === planId);
-      if (!plan) return;
-      cart.push({ id: `${planId}-${Date.now()}`, name: plan.name, billing: billingMode, price: plan[billingMode] });
-      renderCart();
-      showToast(`${plan.name} added to cart.`);
-      document.getElementById('checkout').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    window.addToCart = addToCart;
-
-    function removeFromCart(itemId) {
-      const index = cart.findIndex(item => item.id === itemId);
-      if (index === -1) return;
-      const [removed] = cart.splice(index, 1);
-      renderCart();
-      showToast(`${removed.name} removed from cart.`);
-    }
-    window.removeFromCart = removeFromCart;
-
-    function renderCart() {
-      if (!cart.length) {
-        cartState.style.display = 'block';
-        cartItems.innerHTML = '';
-      } else {
-        cartState.style.display = 'none';
-        cartItems.innerHTML = cart.map(item => `
-          <div class="cart-item">
-            <div class="cart-meta">
-              <strong>${item.name}</strong>
-              <small>${item.billing === 'monthly' ? 'Monthly plan' : 'Yearly plan'}</small>
-              <div style="font-weight:800; margin-top:.3rem;">${money(item.price)}</div>
-            </div>
-            <button class="remove-btn" type="button" aria-label="Remove ${item.name}" onclick="removeFromCart('${item.id}')">✕</button>
-          </div>`).join('');
-      }
-      const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-      const fee = subtotal ? Math.ceil(subtotal * 0.06) : 0;
-      const coupon = couponInput.value.trim().toUpperCase();
-      const discount = coupon === 'SAVE10' ? Math.floor(subtotal * 0.10) : 0;
-      const total = Math.max(subtotal + fee - discount, 0);
-      subtotalValue.textContent = money(subtotal);
-      feeValue.textContent = money(fee);
-      discountValue.textContent = `-${money(discount)}`;
-      totalValue.textContent = money(total);
-      purchaseBtn.textContent = cart.length ? `Complete purchase • ${money(total)}` : 'Complete purchase';
-    }
-
-    billingButtons.forEach(btn => btn.addEventListener('click', () => {
-      billingMode = btn.dataset.billing;
-      billingButtons.forEach(item => item.classList.toggle('active', item === btn));
-      renderPlans();
-    }));
-
-    searchInput.addEventListener('input', renderPlans);
-    categoryFilter.addEventListener('change', renderPlans);
-    couponInput.addEventListener('input', renderCart);
-
-    checkoutForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if (!cart.length) return showToast('Add at least one plan before purchase.');
-      const data = new FormData(checkoutForm);
-      const name = data.get('buyerName');
-      const email = data.get('buyerEmail');
-      if (!name || !email) return showToast('Please fill in your name and email.');
-      showToast(`Order placed for ${name}. Confirmation sent to ${email}.`);
-      checkoutForm.reset();
-      cart.length = 0;
-      renderCart();
-    });
-
-    let currentTheme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-    themeToggle.addEventListener('click', () => {
-      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', currentTheme);
-      themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-    });
-
-    renderPlans();
-    renderCart();
-  </script>
+renderGrid();
+</script>
 </body>
 </html>
